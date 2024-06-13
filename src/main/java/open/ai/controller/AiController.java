@@ -3,10 +3,12 @@ package open.ai.controller;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import open.ai.Config.ChatClient;
+import open.ai.dto.ResponseDTO;
+import open.ai.requests.ConversationDataRequestBody;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -17,9 +19,8 @@ public class AiController {
   private final ChatClient chatClient;
 
   @GetMapping
-  public ResponseEntity<ResponseDTO> chat(
-      @RequestParam(defaultValue = "Hello", value = "message") String message) {
-    return ResponseEntity.ok(chatClient.call(message));
+  public ResponseEntity<ResponseDTO> chat(@RequestBody ConversationDataRequestBody conversation) {
+    return ResponseEntity.ok(chatClient.call(conversation));
   }
 
   @GetMapping("/models")

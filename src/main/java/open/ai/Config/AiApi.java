@@ -1,36 +1,66 @@
 package open.ai.Config;
 
 import java.util.Set;
-import open.ai.controller.ResponseDTO;
+import open.ai.domain.ConversationData;
+import open.ai.dto.ResponseDTO;
+import open.ai.repository.ConversationDataRepository;
+import open.ai.requests.ConversationDataRequestBody;
+import open.ai.service.ConversationDataService;
 import open.ai.utils.ApiUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClient.Builder;
 
 @Service
 public class AiApi {
 
   private final RestClient restClient;
-  private String model;
+  private final ConversationDataService conversationDataService;
+  private final ConversationDataRepository conversationDataRepository;
+  private final String persistence;
+  private final String model;
 
-  public AiApi(RestClient.Builder restClientBuilder,
+  public AiApi(Builder restClientBuilder,
+      ConversationDataService conversationDataService,
+      ConversationDataRepository conversationDataRepository,
       @Value("${spring.tinelli.ai.url}") String baseUrl,
       @Value("${spring.tinelli.ai.token}") String token,
-      @Value("${spring.tinelli.ai.model}") String modelValue) {
+      @Value("${spring.tinelli.ai.model}") String modelValue,
+      @Value("${spring.tinelli.ai.persistence}") String persistenceValue) {
+    this.conversationDataService = conversationDataService;
+    this.conversationDataRepository = conversationDataRepository;
     this.model = modelValue;
+    this.persistence = persistenceValue;
     this.restClient = restClientBuilder
         .baseUrl(baseUrl)
         .defaultHeaders(ApiUtils.getJsonContentHeaders(token))
         .build();
   }
 
-  public ResponseDTO returnResponse(String message) {
-    return this.restClient.post()
+  public ResponseDTO returnResponse(ConversationDataRequestBody conversation) {
+    ConversationData history = null;
+    if (conversation.getId() != null) {
+      history = conversationDataService.getConversationDataById(conversation.getId());
+    }
+    ResponseDTO response = this.restClient.post()
         .uri("/v1/inference")
-        .body(ApiUtils.getJsonContentBody(message, model))
+        .body(ApiUtils.getJsonContentBody(conversation.getMessage(), model, history, persistence))
         .retrieve()
         .toEntity(ResponseDTO.class)
         .getBody();
+    if (persistence.equals("true") && history != null) {
+      conversationDataRepository.save(ConversationData.builder()
+          .id(history.getId())
+          .userMessage(conversation.getMessage() + history.getUserMessage())
+          .aiResponse(
+              response.getResult().getAnswer().values().toString() + history.getAiResponse())
+          .build());
+    } else if (persistence.equals("true")) {
+      conversationDataService.saveConversationData(conversation.getMessage(),
+          response.getResult().getAnswer().values().toString());
+    }
+    return response;
   }
 
   public Set getModels() {

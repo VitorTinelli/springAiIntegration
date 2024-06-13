@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import open.ai.domain.ConversationData;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
@@ -17,11 +18,20 @@ public class ApiUtils {
     };
   }
 
-  public static String getJsonContentBody(String message, String model) {
+  public static String getJsonContentBody(String message, String model, ConversationData context,
+      String persistence) {
     Map<String, Object> map = new HashMap<>();
     map.put("workflow_id", model);
     map.put("query", message);
-    map.put("is_persistence_allowed", "false");
+    map.put("is_persistence_allowed", persistence);
+
+    if (context != null) {
+      Map<String, String> history = new HashMap<>();
+      history.put("user_message", context.getUserMessage());
+      history.put("ai_response", context.getAiResponse());
+      
+      map.put("context", history);
+    }
 
     ObjectMapper objectMapper = new ObjectMapper();
     String json;

@@ -1,4 +1,4 @@
-package open.ai.controller;
+package open.ai.dto;
 
 import java.util.List;
 import java.util.Map;
@@ -33,7 +33,7 @@ public class ResponseDTO {
 
   @Getter
   @Setter
-  static class Result {
+  public static class Result {
 
     @JsonProperty("user_input")
     private String userInput;

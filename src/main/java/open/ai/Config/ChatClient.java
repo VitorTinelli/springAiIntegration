@@ -1,7 +1,8 @@
 package open.ai.Config;
 
 import java.util.Set;
-import open.ai.controller.ResponseDTO;
+import open.ai.dto.ResponseDTO;
+import open.ai.requests.ConversationDataRequestBody;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,8 +14,8 @@ public class ChatClient{
     this.aiApi = aiApi;
   }
 
-  public ResponseDTO call(String message){
-    return aiApi.returnResponse(message);
+  public ResponseDTO call(ConversationDataRequestBody conversation) {
+    return aiApi.returnResponse(conversation);
   }
 
   public Set models() {
