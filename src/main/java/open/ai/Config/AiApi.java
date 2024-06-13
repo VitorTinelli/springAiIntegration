@@ -52,9 +52,9 @@ public class AiApi {
     if (persistence.equals("true") && history != null) {
       conversationDataRepository.save(ConversationData.builder()
           .id(history.getId())
-          .userMessage(conversation.getMessage() + history.getUserMessage())
+          .userMessage(history.getUserMessage() + conversation.getMessage())
           .aiResponse(
-              response.getResult().getAnswer().values().toString() + history.getAiResponse())
+              history.getAiResponse() + response.getResult().getAnswer().values().toString())
           .build());
     } else if (persistence.equals("true")) {
       conversationDataService.saveConversationData(conversation.getMessage(),
