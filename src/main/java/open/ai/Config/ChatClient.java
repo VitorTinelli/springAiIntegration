@@ -1,5 +1,6 @@
 package open.ai.Config;
 
+import java.util.Set;
 import open.ai.controller.ResponseDTO;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,14 @@ public class ChatClient{
   }
 
   public ResponseDTO call(String message){
-    return aiApi.returnResponse(message).getBody();
+    return aiApi.returnResponse(message);
   }
 
+  public Set models() {
+    return aiApi.getModels();
+  }
+
+  public Set allModels() {
+    return aiApi.getAllModels();
+  }
 }

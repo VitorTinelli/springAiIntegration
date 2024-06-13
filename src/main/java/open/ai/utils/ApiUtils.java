@@ -11,17 +11,17 @@ import org.springframework.http.MediaType;
 public class ApiUtils {
 
   public static Consumer<HttpHeaders> getJsonContentHeaders(String apiKey) {
-    return (headers) -> {
+    return headers -> {
       headers.setBearerAuth(apiKey);
       headers.setContentType(MediaType.APPLICATION_JSON);
     };
   }
 
-  public static String getJsonContentBody(String message) {
+  public static String getJsonContentBody(String message, String model) {
     Map<String, Object> map = new HashMap<>();
-    map.put("workflow_id", "80f448d2-fd59-440f-ba24-ebc3014e1fdf");
+    map.put("workflow_id", model);
     map.put("query", message);
-    map.put("is_persistence_allowed", false);
+    map.put("is_persistence_allowed", "false");
 
     ObjectMapper objectMapper = new ObjectMapper();
     String json;

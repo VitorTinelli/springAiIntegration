@@ -11,6 +11,7 @@ These instructions will get you a copy of the project up and running on your loc
 - Java 17 or higher
 - Gradle
 - IntelliJ IDEA 2024.1.3 or any preferred IDE
+- Your Ai model information
 
 ### Installing
 
@@ -20,7 +21,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ## Running the Application
 
-You can run the application from your IDE by running the `AiApplication` class, or from the command line with Gradle:
+You can run the application from your IDE by running this code in the command line with Gradle:
 
 ```bash
 gradle bootRun
