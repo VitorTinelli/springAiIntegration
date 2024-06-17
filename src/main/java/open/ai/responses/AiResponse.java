@@ -1,4 +1,4 @@
-package open.ai.dto;
+package open.ai.responses;
 
 import java.util.List;
 import java.util.Map;
@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class ResponseDTO {
+public class AiResponse {
 
   @JsonProperty("request_id")
   private String requestId;

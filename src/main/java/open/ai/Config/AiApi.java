@@ -2,9 +2,9 @@ package open.ai.Config;
 
 import java.util.Set;
 import open.ai.domain.ConversationData;
-import open.ai.dto.ResponseDTO;
 import open.ai.repository.ConversationDataRepository;
 import open.ai.requests.ConversationDataRequestBody;
+import open.ai.responses.AiResponse;
 import open.ai.service.ConversationDataService;
 import open.ai.utils.ApiUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,16 +38,16 @@ public class AiApi {
         .build();
   }
 
-  public ResponseDTO returnResponse(ConversationDataRequestBody conversation) {
+  public AiResponse returnResponse(ConversationDataRequestBody conversation) {
     ConversationData history = null;
     if (conversation.getId() != null) {
       history = conversationDataService.getConversationDataById(conversation.getId());
     }
-    ResponseDTO response = this.restClient.post()
+    AiResponse response = this.restClient.post()
         .uri("/v1/inference")
         .body(ApiUtils.getJsonContentBody(conversation.getMessage(), model, history, persistence))
         .retrieve()
-        .toEntity(ResponseDTO.class)
+        .toEntity(AiResponse.class)
         .getBody();
     if (persistence.equals("true") && history != null) {
       conversationDataRepository.save(ConversationData.builder()

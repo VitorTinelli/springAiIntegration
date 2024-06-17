@@ -3,8 +3,8 @@ package open.ai.controller;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import open.ai.Config.ChatClient;
-import open.ai.dto.ResponseDTO;
 import open.ai.requests.ConversationDataRequestBody;
+import open.ai.responses.AiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +19,7 @@ public class AiController {
   private final ChatClient chatClient;
 
   @GetMapping
-  public ResponseEntity<ResponseDTO> chat(@RequestBody ConversationDataRequestBody conversation) {
+  public ResponseEntity<AiResponse> chat(@RequestBody ConversationDataRequestBody conversation) {
     return ResponseEntity.ok(chatClient.call(conversation));
   }
 
