@@ -1,9 +1,10 @@
 package open.ai.Config;
 
 import java.util.Set;
+import java.util.UUID;
 import open.ai.domain.ConversationData;
+import open.ai.prompt.Prompt;
 import open.ai.repository.ConversationDataRepository;
-import open.ai.requests.ConversationDataRequestBody;
 import open.ai.responses.AiResponse;
 import open.ai.service.ConversationDataService;
 import open.ai.utils.ApiUtils;
@@ -38,26 +39,51 @@ public class AiApi {
         .build();
   }
 
-  public AiResponse returnResponse(ConversationDataRequestBody conversation) {
+  public AiResponse returnResponse(UUID id, String message) {
     ConversationData history = null;
-    if (conversation.getId() != null) {
-      history = conversationDataService.getConversationDataById(conversation.getId());
+    if (id != null) {
+      history = conversationDataService.getConversationDataById(id);
     }
     AiResponse response = this.restClient.post()
         .uri("/v1/inference")
-        .body(ApiUtils.getJsonContentBody(conversation.getMessage(), model, history, persistence))
+        .body(ApiUtils.getJsonContentBody(message, model, history, persistence))
         .retrieve()
         .toEntity(AiResponse.class)
         .getBody();
     if (persistence.equals("true") && history != null) {
       conversationDataRepository.save(ConversationData.builder()
           .id(history.getId())
-          .userMessage(history.getUserMessage() + conversation.getMessage())
+          .userMessage(history.getUserMessage() + message)
           .aiResponse(
               history.getAiResponse() + response.getResult().getAnswer().values().toString())
           .build());
     } else if (persistence.equals("true")) {
-      conversationDataService.saveConversationData(conversation.getMessage(),
+      conversationDataService.saveConversationData(message,
+          response.getResult().getAnswer().values().toString());
+    }
+    return response;
+  }
+
+  public AiResponse returnResponse(UUID id, Prompt message) {
+    ConversationData history = null;
+    if (id != null) {
+      history = conversationDataService.getConversationDataById(id);
+    }
+    AiResponse response = this.restClient.post()
+        .uri("/v1/inference")
+        .body(ApiUtils.getJsonContentBody(message.toString(), model, history, persistence))
+        .retrieve()
+        .toEntity(AiResponse.class)
+        .getBody();
+    if (persistence.equals("true") && history != null) {
+      conversationDataRepository.save(ConversationData.builder()
+          .id(history.getId())
+          .userMessage(history.getUserMessage() + message)
+          .aiResponse(
+              history.getAiResponse() + response.getResult().getAnswer().values().toString())
+          .build());
+    } else if (persistence.equals("true")) {
+      conversationDataService.saveConversationData(message.toString(),
           response.getResult().getAnswer().values().toString());
     }
     return response;

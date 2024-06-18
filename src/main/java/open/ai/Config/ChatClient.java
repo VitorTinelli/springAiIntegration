@@ -1,7 +1,8 @@
 package open.ai.Config;
 
 import java.util.Set;
-import open.ai.requests.ConversationDataRequestBody;
+import java.util.UUID;
+import open.ai.prompt.Prompt;
 import open.ai.responses.AiResponse;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +15,12 @@ public class ChatClient{
     this.aiApi = aiApi;
   }
 
-  public AiResponse call(ConversationDataRequestBody conversation) {
-    return aiApi.returnResponse(conversation);
+  public String call(UUID id, String message) {
+    return aiApi.returnResponse(id, message).getResult().getAnswer().toString();
+  }
+
+  public AiResponse call(UUID id, Prompt message) {
+    return aiApi.returnResponse(id, message);
   }
 
   public Set models() {
