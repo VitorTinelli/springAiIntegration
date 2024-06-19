@@ -1,4 +1,4 @@
-package open.ai.Config;
+package open.ai.config;
 
 import java.util.Set;
 import java.util.UUID;

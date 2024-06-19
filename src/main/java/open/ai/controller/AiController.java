@@ -3,12 +3,14 @@ package open.ai.controller;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
-import open.ai.Config.ChatClient;
+import open.ai.config.ChatClient;
+import open.ai.listOutputParser.ListOutputParser;
 import open.ai.prompt.Message;
 import open.ai.prompt.Prompt;
 import open.ai.prompt.SystemMessage;
 import open.ai.prompt.UserMessage;
 import open.ai.requests.ConversationDataRequestBody;
+import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,9 +25,11 @@ public class AiController {
   private final ChatClient chatClient;
 
   @GetMapping
-  public ResponseEntity<String> chat(@RequestBody ConversationDataRequestBody conversation) {
-    return ResponseEntity.ok(
-        chatClient.call(conversation.getId(), conversation.getMessage()));
+  public ResponseEntity<List<String>> chat(@RequestBody ConversationDataRequestBody conversation) {
+    ListOutputParser outputParser = new ListOutputParser(new DefaultConversionService());
+    String message = conversation.getMessage() + outputParser.getFormat();
+    return ResponseEntity.ok(outputParser.parse(
+        chatClient.call(conversation.getId(), message)));
   }
 
   @GetMapping("/prompt")
