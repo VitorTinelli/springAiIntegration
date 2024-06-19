@@ -80,11 +80,12 @@ public class AiApi {
           .id(history.getId())
           .userMessage(history.getUserMessage() + message)
           .aiResponse(
-              history.getAiResponse() + response.getResult().getAnswer().values().toString())
+              history.getAiResponse() + response.getResult().getAnswer().values().toString()
+                  .replace("[", "").replace("]", ""))
           .build());
     } else if (persistence.equals("true")) {
       conversationDataService.saveConversationData(message.toString(),
-          response.getResult().getAnswer().values().toString());
+          response.getResult().getAnswer().values().toString().replace("[", "").replace("]", ""));
     }
     return response;
   }
