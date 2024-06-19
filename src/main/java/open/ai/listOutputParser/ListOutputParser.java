@@ -13,7 +13,6 @@ public class ListOutputParser extends AbstractConversionServiceOutputParser<List
   public String getFormat() {
     return """
         Your response should be a list of comma separated values.
-        don't use inverse bar or / in your response.
         eg: `foo, bar, baz`
         """;
   }
@@ -22,5 +21,4 @@ public class ListOutputParser extends AbstractConversionServiceOutputParser<List
   public List<String> parse(String text) {
     return getConversionService().convert(text, List.class);
   }
-
 }

@@ -3,14 +3,9 @@ package open.ai.controller;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
-import open.ai.config.ChatClient;
-import open.ai.listOutputParser.ListOutputParser;
-import open.ai.prompt.Message;
-import open.ai.prompt.Prompt;
-import open.ai.prompt.SystemMessage;
-import open.ai.prompt.UserMessage;
 import open.ai.requests.ConversationDataRequestBody;
-import org.springframework.core.convert.support.DefaultConversionService;
+import open.ai.responses.AiResponse;
+import open.ai.service.AiService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,34 +17,33 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AiController {
 
-  private final ChatClient chatClient;
+  private final AiService aiService;
 
   @GetMapping
-  public ResponseEntity<List<String>> chat(@RequestBody ConversationDataRequestBody conversation) {
-    ListOutputParser outputParser = new ListOutputParser(new DefaultConversionService());
-    String message = conversation.getMessage() + outputParser.getFormat();
-    return ResponseEntity.ok(outputParser.parse(
-        chatClient.call(conversation.getId(), message)));
+  public ResponseEntity<String> call(@RequestBody ConversationDataRequestBody conversation) {
+    return ResponseEntity.ok(aiService.call(conversation.getId(), conversation.getMessage()));
+  }
+
+  @GetMapping("/list")
+  public ResponseEntity<List<String>> listOutputParser(
+      @RequestBody ConversationDataRequestBody conversation) {
+    return ResponseEntity.ok(
+        aiService.ListOutputParser(conversation.getId(), conversation.getMessage()));
   }
 
   @GetMapping("/prompt")
-  public ResponseEntity<String> prompt(@RequestBody ConversationDataRequestBody conversation) {
-    String systemText = "Seu nome é contador tinelli, sempre começe dizendo seu nome, e após a resposta";
-    Message systemMessage = new SystemMessage(systemText);
-    Message userMessage = new UserMessage(conversation.getMessage());
-    return ResponseEntity.ok(
-        chatClient.call(conversation.getId(), new Prompt(List.of(systemMessage, userMessage)))
-            .getResult().getAnswer().values().toString().replace("[", "").replace("]", ""));
+  public ResponseEntity<AiResponse> prompt(@RequestBody ConversationDataRequestBody conversation) {
+    return ResponseEntity.ok(aiService.promptCall(conversation.getId(), conversation.getMessage()));
   }
 
   @GetMapping("/models")
   public ResponseEntity<Set> getModels() {
-    return ResponseEntity.ok(chatClient.models());
+    return ResponseEntity.ok(aiService.models());
   }
 
   @GetMapping("/all_models")
   public ResponseEntity<Set> getAllModels() {
-    return ResponseEntity.ok(chatClient.allModels());
+    return ResponseEntity.ok(aiService.allModels());
   }
 
 }

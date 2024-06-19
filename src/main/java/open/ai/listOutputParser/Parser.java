@@ -4,5 +4,4 @@ package open.ai.listOutputParser;
 public interface Parser<T> {
 
   T parse(String text);
-
 }

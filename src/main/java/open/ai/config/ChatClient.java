@@ -7,7 +7,7 @@ import open.ai.responses.AiResponse;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ChatClient{
+public class ChatClient {
 
   private final AiApi aiApi;
 
