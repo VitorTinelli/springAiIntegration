@@ -16,7 +16,8 @@ public class ChatClient {
   }
 
   public String call(UUID id, String message) {
-    return aiApi.returnResponse(id, message).getResult().getAnswer().values().toString();
+    return aiApi.returnResponse(id, message).getResult().getAnswer().values().toString()
+        .replace("[", "").replace("]", "");
   }
 
   public AiResponse call(UUID id, Prompt message) {
