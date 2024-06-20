@@ -13,7 +13,7 @@ public class ListOutputParser extends AbstractConversionServiceOutputParser<List
   public String getFormat() {
     return """
         Your response should be a list of comma separated values.
-        1.3        If you will return a list, don´t return instructions like: 'My name is... or any other text. Just return the list of values separated by commas.
+        If you will return a list, don´t return instructions like: 'My name is... or any other text. Just return the list of values separated by commas.
         eg: `foo, bar, baz`
         Don´t use symbols like `[]` or `{}` or `/|` or  `**` .
         """;
