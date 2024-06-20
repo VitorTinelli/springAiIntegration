@@ -28,7 +28,7 @@ public class AiController {
   public ResponseEntity<List<String>> listOutputParser(
       @RequestBody ConversationDataRequestBody conversation) {
     return ResponseEntity.ok(
-        aiService.ListOutputParser(conversation.getId(), conversation.getMessage()));
+        aiService.listOutputParser(conversation.getId(), conversation.getMessage()));
   }
 
   @GetMapping("/prompt")

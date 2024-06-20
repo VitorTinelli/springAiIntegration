@@ -26,7 +26,7 @@ public class AiService {
     return chatClient.call(id, message);
   }
 
-  public List<String> ListOutputParser(UUID id, String message) {
+  public List<String> listOutputParser(UUID id, String message) {
     ListOutputParser outputParser = new ListOutputParser(new DefaultConversionService());
     return outputParser.parse(chatClient.call(id, message + outputParser.getFormat()));
   }

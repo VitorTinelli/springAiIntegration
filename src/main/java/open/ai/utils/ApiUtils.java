@@ -5,10 +5,12 @@ import java.util.Map;
 import java.util.function.Consumer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.experimental.UtilityClass;
 import open.ai.domain.ConversationData;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
+@UtilityClass
 public class ApiUtils {
 
   public static Consumer<HttpHeaders> getJsonContentHeaders(String apiKey) {
