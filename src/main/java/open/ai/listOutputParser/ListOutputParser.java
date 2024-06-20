@@ -14,6 +14,7 @@ public class ListOutputParser extends AbstractConversionServiceOutputParser<List
     return """
         Your response should be a list of comma separated values.
         eg: `foo, bar, baz`
+        Don´t use symbols like `[]` or `{}` or `/|` or  `**` .
         """;
   }
 

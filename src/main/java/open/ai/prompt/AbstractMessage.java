@@ -18,9 +18,6 @@ public abstract class AbstractMessage implements Message {
 
   protected final List<Media> media;
 
-  /**
-   * Additional options for the message to influence the response, not a generative map.
-   */
   protected final Map<String, Object> metadata;
 
   protected AbstractMessage(MessageType messageType, String content) {

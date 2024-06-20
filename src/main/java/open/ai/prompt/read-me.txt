@@ -1,0 +1,15 @@
+This package contains files developed by SPRING AI (open AI) development team.
+
+The package contains the following files:
+1. AbstractMessage.java
+2. AssistantMessage.java (With a little modification)
+3. Content.java
+4. FunctionMessage.java (With a little modification)
+5. Media.java
+6. Message.java
+7. MessageType.java
+8. Prompt.java (With modifications)
+9. SystemMessage.java (With a little modification)
+10. UserMessage.java (With a little modification)
+
+11. read-me.txt

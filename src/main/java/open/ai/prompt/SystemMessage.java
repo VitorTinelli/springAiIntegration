@@ -14,8 +14,7 @@ public class SystemMessage extends AbstractMessage {
 
   @Override
   public String toString() {
-    return "SystemMessage{" + "content='" + getContent() + '\'' + ", properties=" + metadata
-        + ", messageType="
+    return "SystemMessage{" + "content='" + getContent() + '\'' + ", properties: messageType="
         + messageType + '}';
   }
 
