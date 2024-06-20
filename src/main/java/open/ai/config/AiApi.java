@@ -8,6 +8,7 @@ import open.ai.repository.ConversationDataRepository;
 import open.ai.responses.AiResponse;
 import open.ai.service.ConversationDataService;
 import open.ai.utils.ApiUtils;
+import open.ai.utils.StringOutputParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -55,12 +56,10 @@ public class AiApi {
           .id(history.getId())
           .userMessage(history.getUserMessage() + message)
           .aiResponse(
-              history.getAiResponse() + response.getResult().getAnswer().values().toString()
-                  .replace("[", "").replace("]", ""))
+              history.getAiResponse() + StringOutputParser.parse(response))
           .build());
     } else if (persistence.equals("true")) {
-      conversationDataService.saveConversationData(message,
-          response.getResult().getAnswer().values().toString().replace("[", "").replace("]", ""));
+      conversationDataService.saveConversationData(message, StringOutputParser.parse(response));
     }
     return response;
   }
@@ -81,12 +80,11 @@ public class AiApi {
           .id(history.getId())
           .userMessage(history.getUserMessage() + message)
           .aiResponse(
-              history.getAiResponse() + response.getResult().getAnswer().values().toString()
-                  .replace("[", "").replace("]", ""))
+              history.getAiResponse() + StringOutputParser.parse(response))
           .build());
     } else if (persistence.equals("true")) {
       conversationDataService.saveConversationData(message.toString(),
-          response.getResult().getAnswer().values().toString().replace("[", "").replace("]", ""));
+          StringOutputParser.parse(response));
     }
     return response;
   }

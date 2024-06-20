@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.UUID;
 import open.ai.prompt.Prompt;
 import open.ai.responses.AiResponse;
+import open.ai.utils.StringOutputParser;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,8 +17,7 @@ public class ChatClient {
   }
 
   public String call(UUID id, String message) {
-    return aiApi.returnResponse(id, message).getResult().getAnswer().values().toString()
-        .replace("[", "").replace("]", "");
+    return StringOutputParser.parse(aiApi.returnResponse(id, message));
   }
 
   public AiResponse call(UUID id, Prompt message) {
