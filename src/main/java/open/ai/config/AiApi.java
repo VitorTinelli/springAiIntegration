@@ -4,7 +4,6 @@ import java.util.Set;
 import java.util.UUID;
 import open.ai.domain.ConversationData;
 import open.ai.prompt.Prompt;
-import open.ai.repository.ConversationDataRepository;
 import open.ai.responses.AiResponse;
 import open.ai.service.ConversationDataService;
 import open.ai.utils.ApiUtils;
@@ -19,19 +18,16 @@ public class AiApi {
 
   private final RestClient restClient;
   private final ConversationDataService conversationDataService;
-  private final ConversationDataRepository conversationDataRepository;
   private final String persistence;
   private final String model;
 
   public AiApi(Builder restClientBuilder,
       ConversationDataService conversationDataService,
-      ConversationDataRepository conversationDataRepository,
       @Value("${spring.tinelli.ai.url}") String baseUrl,
       @Value("${spring.tinelli.ai.token}") String token,
       @Value("${spring.tinelli.ai.model}") String modelValue,
       @Value("${spring.tinelli.ai.persistence}") String persistenceValue) {
     this.conversationDataService = conversationDataService;
-    this.conversationDataRepository = conversationDataRepository;
     this.model = modelValue;
     this.persistence = persistenceValue;
     this.restClient = restClientBuilder
@@ -52,12 +48,8 @@ public class AiApi {
         .toEntity(AiResponse.class)
         .getBody();
     if (persistence.equals("true") && history != null) {
-      conversationDataRepository.save(ConversationData.builder()
-          .id(history.getId())
-          .userMessage(history.getUserMessage() + message)
-          .aiResponse(
-              history.getAiResponse() + StringOutputParser.parse(response))
-          .build());
+      conversationDataService.replaceConversationData(message,
+          StringOutputParser.parse(response), history);
     } else if (persistence.equals("true")) {
       conversationDataService.saveConversationData(message, StringOutputParser.parse(response));
     }
@@ -76,12 +68,8 @@ public class AiApi {
         .toEntity(AiResponse.class)
         .getBody();
     if (persistence.equals("true") && history != null) {
-      conversationDataRepository.save(ConversationData.builder()
-          .id(history.getId())
-          .userMessage(history.getUserMessage() + message)
-          .aiResponse(
-              history.getAiResponse() + StringOutputParser.parse(response))
-          .build());
+      conversationDataService.replaceConversationData(message.toString(),
+          StringOutputParser.parse(response), history);
     } else if (persistence.equals("true")) {
       conversationDataService.saveConversationData(message.toString(),
           StringOutputParser.parse(response));

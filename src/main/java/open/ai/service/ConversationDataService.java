@@ -25,6 +25,15 @@ public class ConversationDataService {
         .build());
   }
 
+  public void replaceConversationData(String userMessage, String aiResponse,
+      ConversationData history) {
+    conversationDataRepository.save(ConversationData.builder()
+        .id(history.getId())
+        .userMessage(history.getUserMessage() + userMessage)
+        .aiResponse(history.getAiResponse() + aiResponse)
+        .build());
+  }
+
   public void deleteConversationData(UUID id) {
     conversationDataRepository.deleteById(id);
   }
