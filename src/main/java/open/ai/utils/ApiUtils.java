@@ -28,11 +28,12 @@ public class ApiUtils {
     map.put("is_persistence_allowed", persistence);
 
     if (context != null) {
-      Map<String, String> history = new HashMap<>();
-      history.put("user_message", context.getUserMessage());
-      history.put("ai_response", context.getAiResponse());
-      
-      map.put("context", history);
+      Map<String, String> systemPrompt = new HashMap<>();
+      systemPrompt.put("system_prompt", context.getUserMessage() + context.getAiResponse());
+
+      Map<String, Map<String, String>> modelParams = new HashMap<>();
+      modelParams.put("openai_gpt-4o", systemPrompt);
+      map.put("modelparams", modelParams);
     }
 
     ObjectMapper objectMapper = new ObjectMapper();

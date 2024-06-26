@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import open.ai.requests.ConversationDataRequestBody;
+import open.ai.responses.AiResponse;
 import open.ai.service.AiService;
-import open.ai.utils.StringOutputParser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,8 +32,8 @@ public class AiController {
   }
 
   @GetMapping("/prompt")
-  public ResponseEntity<String> prompt(@RequestBody ConversationDataRequestBody conversation) {
-    return ResponseEntity.ok(StringOutputParser.parse(
+  public ResponseEntity<AiResponse> prompt(@RequestBody ConversationDataRequestBody conversation) {
+    return ResponseEntity.ok((
         aiService.promptCall(conversation.getId(), conversation.getMessage())));
   }
 
