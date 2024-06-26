@@ -1,5 +1,6 @@
 package open.ai.config;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import open.ai.domain.ConversationData;
@@ -37,19 +38,16 @@ public class AiApi {
   }
 
   public AiResponse returnResponse(UUID id, String message) {
-    ConversationData history = null;
-    if (id != null) {
-      history = conversationDataService.getConversationDataById(id);
-    }
+    Optional<ConversationData> history = conversationDataService.getConversationDataById(id);
     AiResponse response = this.restClient.post()
         .uri("/v1/inference")
         .body(ApiUtils.getJsonContentBody(message, model, history, persistence))
         .retrieve()
         .toEntity(AiResponse.class)
         .getBody();
-    if (persistence.equals("true") && history != null) {
+    if (persistence.equals("true") && history.isPresent()) {
       conversationDataService.replaceConversationData(message,
-          StringOutputParser.parse(response), history);
+          StringOutputParser.parse(response), history.get());
     } else if (persistence.equals("true")) {
       conversationDataService.saveConversationData(message, StringOutputParser.parse(response));
     }
@@ -57,19 +55,16 @@ public class AiApi {
   }
 
   public AiResponse returnResponse(UUID id, Prompt message) {
-    ConversationData history = null;
-    if (id != null) {
-      history = conversationDataService.getConversationDataById(id);
-    }
+    Optional<ConversationData> history = conversationDataService.getConversationDataById(id);
     AiResponse response = this.restClient.post()
         .uri("/v1/inference")
         .body(ApiUtils.getJsonContentBody(message.toString(), model, history, persistence))
         .retrieve()
         .toEntity(AiResponse.class)
         .getBody();
-    if (persistence.equals("true") && history != null) {
+    if (persistence.equals("true") && history.isPresent()) {
       conversationDataService.replaceConversationData(message.toString(),
-          StringOutputParser.parse(response), history);
+          StringOutputParser.parse(response), history.get());
     } else if (persistence.equals("true")) {
       conversationDataService.saveConversationData(message.toString(),
           StringOutputParser.parse(response));

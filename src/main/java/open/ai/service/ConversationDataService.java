@@ -1,5 +1,6 @@
 package open.ai.service;
 
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import open.ai.domain.ConversationData;
@@ -12,9 +13,11 @@ public class ConversationDataService {
 
   private final ConversationDataRepository conversationDataRepository;
 
-  public ConversationData getConversationDataById(UUID id) {
-    return conversationDataRepository.findById(id)
-        .orElse(null);
+  public Optional<ConversationData> getConversationDataById(UUID id) {
+    if (id == null) {
+      return Optional.empty();
+    }
+    return conversationDataRepository.findById(id);
   }
 
   public void saveConversationData(String userMessage, String aiResponse) {
