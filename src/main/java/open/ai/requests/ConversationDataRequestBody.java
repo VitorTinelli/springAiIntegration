@@ -5,7 +5,6 @@ import lombok.Data;
 
 @Data
 public class ConversationDataRequestBody {
-
   UUID id;
   String message;
 }

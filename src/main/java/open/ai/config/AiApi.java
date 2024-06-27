@@ -17,6 +17,7 @@ import org.springframework.web.client.RestClient.Builder;
 @Service
 public class AiApi {
 
+  private static final String INFERENCE = "/v1/inference";
   private final RestClient restClient;
   private final ConversationDataService conversationDataService;
   private final String persistence;
@@ -39,37 +40,64 @@ public class AiApi {
 
   public AiResponse returnResponse(UUID id, String message) {
     Optional<ConversationData> history = conversationDataService.getConversationDataById(id);
-    AiResponse response = this.restClient.post()
-        .uri("/v1/inference")
-        .body(ApiUtils.getJsonContentBody(message, model, history, persistence))
-        .retrieve()
-        .toEntity(AiResponse.class)
-        .getBody();
-    if (persistence.equals("true") && history.isPresent()) {
-      conversationDataService.replaceConversationData(message,
-          StringOutputParser.parse(response), history.get());
-    } else if (persistence.equals("true")) {
-      conversationDataService.saveConversationData(message, StringOutputParser.parse(response));
-    }
-    return response;
+    return history.map(hist -> {
+          AiResponse resp = this.restClient.post()
+              .uri(INFERENCE)
+              .body(ApiUtils.getJsonContentBody(message, model, hist, persistence))
+              .retrieve()
+              .toEntity(AiResponse.class)
+              .getBody();
+          if (persistence.equals("true")) {
+            conversationDataService.replaceConversationData(message,
+                StringOutputParser.parse(resp), hist);
+          }
+          return resp;
+        })
+        .orElseGet(() -> {
+              AiResponse resp = this.restClient.post()
+                  .uri(INFERENCE)
+                  .body(ApiUtils.getJsonContentBody(message, model, persistence))
+                  .retrieve()
+                  .toEntity(AiResponse.class)
+                  .getBody();
+              if (persistence.equals("true")) {
+                conversationDataService.saveConversationData(message,
+                    StringOutputParser.parse(resp));
+              }
+              return resp;
+            }
+        );
   }
 
   public AiResponse returnResponse(UUID id, Prompt message) {
     Optional<ConversationData> history = conversationDataService.getConversationDataById(id);
-    AiResponse response = this.restClient.post()
-        .uri("/v1/inference")
-        .body(ApiUtils.getJsonContentBody(message.toString(), model, history, persistence))
-        .retrieve()
-        .toEntity(AiResponse.class)
-        .getBody();
-    if (persistence.equals("true") && history.isPresent()) {
-      conversationDataService.replaceConversationData(message.toString(),
-          StringOutputParser.parse(response), history.get());
-    } else if (persistence.equals("true")) {
-      conversationDataService.saveConversationData(message.toString(),
-          StringOutputParser.parse(response));
-    }
-    return response;
+    return history.map(hist -> {
+          AiResponse resp = this.restClient.post()
+              .uri(INFERENCE)
+              .body(ApiUtils.getJsonContentBody(message.toString(), model, hist, persistence))
+              .retrieve()
+              .toEntity(AiResponse.class)
+              .getBody();
+          if (persistence.equals("true")) {
+            conversationDataService.replaceConversationData(message.toString(),
+                StringOutputParser.parse(resp), hist);
+          }
+          return resp;
+        })
+        .orElseGet(() -> {
+              AiResponse resp = this.restClient.post()
+                  .uri(INFERENCE)
+                  .body(ApiUtils.getJsonContentBody(message.toString(), model, persistence))
+                  .retrieve()
+                  .toEntity(AiResponse.class)
+                  .getBody();
+              if (persistence.equals("true")) {
+                conversationDataService.saveConversationData(message.toString(),
+                    StringOutputParser.parse(resp));
+              }
+              return resp;
+            }
+        );
   }
 
   public Set getModels() {
