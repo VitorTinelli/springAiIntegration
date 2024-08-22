@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AI Text Sender</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 5dvw;
+            }
+            .container {
+                margin: 0 auto;
+                padding: 5dvw;
+                border: 1px solid #ccc;
+                border-radius: 10px;
+            }
+            .form-group {
+                margin-bottom: 20px;
+            }
+            .form-groupSided {
+                display: flex;
+                margin-bottom: 20px;
+            }
+            label {
+                display: block;
+                margin-bottom: 5px;
+            }
+            input, textarea {
+                width: 100%;
+                padding: 2dvh;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+            button {
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                background-color: #007bff;
+                color: #fff;
+                cursor: pointer;
+            }
+            .loading {
+                display: none;
+                margin-left: 1dvw;
+                margin-top: 10px;
+                font-size: 16px;
+                color: #007bff;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Tinelli AI</h1>
+            <div class="form-group">
+                <label for="userInput">Insira seu Texto:</label>
+                <textarea id="userInput" rows="4" placeholder="Digite algo..."></textarea>
+            </div>
+            <div class="form-groupSided">
+                <button onclick="sendToAI()">Enviar</button>
+                <a class="loading" id="loadingMessage">Carregando...</a>
+            </div>
+            <div class="form-group">
+                <label for="aiResponse">Resposta do Tinelli AI:</label>
+                <textarea id="aiResponse" rows="4" placeholder="A resposta aparecer aqui..." readonly></textarea>
+            </div>
+        </div>
+
+        <script>
+            async function sendToAI() {
+                const userInput = document.getElementById('userInput').value;
+                const loadingMessage = document.getElementById('loadingMessage');
+                document.getElementById('aiResponse').value = "";
+                
+                if (userInput.trim() === "") {
+                    alert("Por favor, insira algum texto.");
+                    return;
+                }
+
+                loadingMessage.style.display = 'block';
+
+                try {
+                    const response = await fetch('http://localhost:8080/ai', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message: userInput })
+                    });
+                    
+                    const data = await response.text();
+                    document.getElementById('aiResponse').value = data;
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Houve um erro ao processar sua solicitação. Por favor, tente novamente mais tarde.');
+                } finally {
+                    loadingMessage.style.display = 'none';
+                }
+            }
+        </script>
+    </body>
+</html>
