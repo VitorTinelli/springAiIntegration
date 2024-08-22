@@ -2,7 +2,7 @@ version: '3.1'
 services:
   postgres:
     image: postgres
-    container_name: "PostgreSQL_TinelliAI"
+    container_name: "PostgreSQL_TinelliAIConnector"
     ports:
       - "5432:5432"
     environment:
